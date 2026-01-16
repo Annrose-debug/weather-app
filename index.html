@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Annie_weather_app</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Weather App  -->
+    <div class="container">
+      <header>
+        <h1>WeatherNow</h1>
+        <p class="tagline">Get real-time weather anywhere</p>
+      </header>
+
+      <!-- SEARCH SECTION  -->
+      <div class="search-container">
+        <div class="input-group">
+          <input
+            type="text"
+            id="cityInput"
+            placeholder="Enter a city name (e.g., London, Tokyo)..."
+            aria-label="City name"
+          />
+          <button id="searchBtn">Search</button>
+        </div>
+
+        <p class="hint">Try: Paris, New York, Tokyo, or your city</p>
+      </div>
+
+      <!-- Loading (hidden by default)  -->
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Fetching weather data...</p>
+      </div>
+
+      <!-- Weather display (hidden by deafult)  -->
+      <div id="weatherDisplay" class="weather-display-hidden">
+        <!-- city and date will go here  -->
+        <div class="weather-header">
+          <h2 id="cityName">-</h2>
+          <p id="currentDate" class="date">-</p>
+        </div>
+
+        <!-- main weather info  -->
+        <div class="weather-main">
+          <div class="temp-section">
+            <div class="temperature">
+              <span id="temperature">-</span>
+              <span class="unit">°C</span>
+            </div>
+            <div class="weather-icon">
+              <img id="weatherIcon" src="" alt="Weather icon" />
+            </div>
+          </div>
+          <div class="condition">
+            <p id="condition">-</p>
+            <p class="feels-like">
+              Feels like: <span id="feelsLike">-</span>°C
+            </p>
+          </div>
+        </div>
+
+        <!-- Additional details -->
+        <div class="weather-details">
+          <div class="detail-card">
+            <i class="fas fa-wind"></i>
+            <div>
+              <p class="label">Wind</p>
+              <p id="windSpeed">- km/h</p>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <i class="fas fa-tint"></i>
+            <div>
+              <p class="label">Humidity</p>
+              <p id="humidity">- %</p>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <i class="fas fa-compress-alt"></i>
+            <div>
+              <p class="label">Pressure</p>
+              <p id="pressure">- hPa</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERROR MESSAGE (Hidden by default) -->
+      <div id="errorMessage" class="error-message hidden">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p id="errorText">City not found. Please try again.</p>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+        <!-- <p>Powered by <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap API</a></p> -->
+        <p class="copyright">
+          © 2026 WeatherNow | Built with HTML, CSS & JavaScript
+        </p>
+      </footer>
+    </div>
+
+    <!-- JavaScript file -->
+    <script src="script.js"></script>
+  </body>
+</html>
