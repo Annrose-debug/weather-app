@@ -1,76 +1,99 @@
-WeatherNow - Live Weather App
-A beautiful, responsive weather application that adapts its mood to real-time weather conditions.
+# 🌦️ WeatherNow - Live Weather App  
 
-https://img.shields.io/badge/Live-Demo-brightgreen
-https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white
-https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white
-https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black
-https://img.shields.io/badge/OpenWeather-API-orange
+A modern, responsive weather application that dynamically adapts its UI based on real-time weather conditions. Built with HTML, CSS, and JavaScript, this project focuses on user experience, interactivity, and clean design.
 
-✨ Features
-🌈 Dynamic Weather Moods
-Visual Adaptation: App background changes based on weather conditions
+---
 
-Sunny Days: Bright orange/yellow theme
+## 🌐 Live Demo  
 
-Rainy Weather: Cool blue theme
+🔗 [View Live App](https://annie-weather-app.netlify.app/)
 
-Snowy Conditions: Light icy blue theme
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen?style=for-the-badge)](https://annie-weather-app.netlify.app/)
 
-Cloudy/Gloomy: Soft gray theme
+---
 
-Night Time: Dark purple theme
+## 🎯 Overview  
 
-Stormy Weather: Deep dark theme
+WeatherNow provides real-time weather data with a visually engaging interface that changes based on current conditions. The application emphasizes responsive design, smooth user interactions, and dynamic content rendering using external APIs.
 
-📊 Weather Information
-Real-time temperature in Celsius
+---
 
-Weather conditions (Clear, Cloudy, Rain, Snow, etc.)
+## ✨ Features  
 
-"Feels like" temperature
+### 🌈 Dynamic Weather UI  
+- Background and theme adapt to real-time weather conditions  
+- Visual themes for sunny, rainy, snowy, cloudy, night, and stormy weather  
+- Enhances user experience through contextual design  
 
-Wind speed (km/h)
+### 📊 Weather Data  
+- Real-time temperature (°C)  
+- Weather condition descriptions  
+- "Feels like" temperature  
+- Wind speed, humidity, and pressure  
+- Location and current date display  
 
-Humidity percentage
+### 🎨 UI/UX  
+- Fully responsive design (mobile, tablet, desktop)  
+- Clean and modern interface  
+- Loading states and smooth transitions  
+- Error handling with user-friendly messages  
+- Search functionality with keyboard support  
 
-Atmospheric pressure
+---
 
-Location and date display
+## 🛠️ Tech Stack  
 
-🎨 UI/UX Features
-Responsive design (mobile, tablet, desktop)
+- **Frontend:** HTML5, CSS3, JavaScript (ES6)  
+- **API:** OpenWeatherMap API  
+- **Styling:** CSS Grid, Flexbox, CSS Animations  
+- **Icons & Fonts:** Font Awesome, Google Fonts  
 
-Clean, modern interface
-
-Loading animations
-
-Error handling with user-friendly messages
-
-Search with Enter key support
-
-Beautiful weather icons from OpenWeatherMap API
-
-🚀 Live Demo
-Check out the live version: https://annie-weather-app.netlify.app/
+---
 
 
-🛠️ Technologies Used
-Frontend: HTML5, CSS3, Vanilla JavaScript
+## 📂 Project Structure 
 
-API: OpenWeatherMap API
-
-Icons: Font Awesome, OpenWeatherMap Icons
-
-Fonts: Google Fonts (Poppins, Nunito)
-
-Design: CSS Grid, Flexbox, CSS Animations
-
-📁 Project Structure
-text
 weather-app/
-├── index.html          # Main HTML structure
-├── style.css           # Styling and weather moods
-├── script.js           # JavaScript logic and API calls
-├── README.md           # Project documentation
-└── screenshot.png      # App screenshot (optional)
+├── index.html
+├── style.css
+├── script.js
+├── README.md
+└── screenshot.png
+
+---
+
+## 🚀 Getting Started  
+
+To run this project locally:
+
+```bash
+git clone https://github.com/Annrose-debug/Annrose-debug.git
+cd weather-app
+open index.html
+```
+
+---
+
+## 💡 Key Highlights
+- Integrated third-party API for real-time data handling
+- Implemented dynamic UI updates based on external conditions
+- Designed responsive layouts for seamless cross-device experience
+- Focused on performance, usability, and clean code structure
+
+  
+--- 
+
+
+## Video Demo
+
+
+https://github.com/user-attachments/assets/056e0f4d-5628-42a2-a897-7215a90d8a23
+
+
+
+---
+## 📫 Contact
+- Email: annrose.akande@outlook.com
+- LinkedIn: http://www.linkedin.com/in/annrose-akande-a2a279349
+
+
