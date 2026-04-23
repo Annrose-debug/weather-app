@@ -6,9 +6,9 @@ A modern, responsive weather application that dynamically adapts its UI based on
 
 ## 🌐 Live Demo  
 
-🔗 [View Live App](https://annie-weather-app.netlify.app/)
+🔗 [View Live App](https://annrose-weather.netlify.app/)
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen?style=for-the-badge)](https://annie-weather-app.netlify.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen?style=for-the-badge)](https://annrose-weather.netlify.app/)
 
 ---
 
@@ -87,7 +87,10 @@ open index.html
 ## Video Demo
 
 
-https://github.com/user-attachments/assets/056e0f4d-5628-42a2-a897-7215a90d8a23
+
+
+https://github.com/user-attachments/assets/cab43f3e-2243-4ec0-a806-368a4db1c1bf
+
 
 
 
