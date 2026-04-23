@@ -1,200 +1,185 @@
-// ====================================
-// 1. GET ALL ELEMENTS FROM HTML
-// ====================================
-const cityInput = document.getElementById('cityInput');
-const searchBtn = document.getElementById('searchBtn');
+// ============================================================
+// WeatherNow — script.js
+// Clean, modular structure with better error handling
+// ============================================================
 
-// Display sections
-const loadingDiv = document.getElementById('loading');
-const weatherDisplay = document.getElementById('weatherDisplay');
-const errorMessage = document.getElementById('errorMessage');
-const errorText = document.getElementById('errorText');
+// ── 1. CONFIG ────────────────────────────────────────────────
+const CONFIG = {
+  apiKey: '4ec347f659266cc1f12950bfec63f775',
+  baseUrl: 'https://api.openweathermap.org/data/2.5/weather',
+  iconUrl: (code) => `https://openweathermap.org/img/wn/${code}@2x.png`,
+};
 
-// Weather data elements
-const cityName = document.getElementById('cityName');
-const currentDate = document.getElementById('currentDate');
-const temperature = document.getElementById('temperature');
-const weatherIcon = document.getElementById('weatherIcon');
-const condition = document.getElementById('condition');
-const feelsLike = document.getElementById('feelsLike');
-const windSpeed = document.getElementById('windSpeed');
-const humidity = document.getElementById('humidity');
-const pressure = document.getElementById('pressure');
+// ── 2. DOM REFERENCES ────────────────────────────────────────
+const $ = (id) => document.getElementById(id);
 
-// ====================================
-// 2. API CONFIGURATION
-// ====================================
-const API_KEY = '4ec347f659266cc1f12950bfec63f775'; 
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const els = {
+  input:       $('cityInput'),
+  searchBtn:   $('searchBtn'),
+  loading:     $('loading'),
+  display:     $('weatherDisplay'),
+  error:       $('errorMessage'),
+  errorText:   $('errorText'),
+  cityName:    $('cityName'),
+  date:        $('currentDate'),
+  temp:        $('temperature'),
+  icon:        $('weatherIcon'),
+  condition:   $('condition'),
+  feelsLike:   $('feelsLike'),
+  wind:        $('windSpeed'),
+  humidity:    $('humidity'),
+  pressure:    $('pressure'),
+  visibility:  $('visibility'),
+};
 
-// ====================================
-// 3. HELPER FUNCTIONS
-// ====================================
-function showLoading() {
-    weatherDisplay.classList.add('hidden');
-    errorMessage.classList.add('hidden');
-    loadingDiv.classList.remove('hidden');
+// ── 3. UI STATE HELPERS ──────────────────────────────────────
+const ui = {
+  showLoading() {
+    els.display.classList.add('hidden');
+    els.error.classList.add('hidden');
+    els.loading.classList.remove('hidden');
+  },
+  showWeather() {
+    els.loading.classList.add('hidden');
+    els.error.classList.add('hidden');
+    els.display.classList.remove('hidden');
+  },
+  showError(msg) {
+    els.loading.classList.add('hidden');
+    els.display.classList.add('hidden');
+    els.errorText.textContent = msg;
+    // Re-trigger shake animation
+    els.error.classList.remove('hidden');
+    void els.error.offsetWidth; // reflow trick
+    els.error.classList.remove('hidden');
+  },
+};
+
+// ── 4. UTILITIES ─────────────────────────────────────────────
+function formatDate(date = new Date()) {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
-function showWeather() {
-    loadingDiv.classList.add('hidden');
-    errorMessage.classList.add('hidden');
-    weatherDisplay.classList.remove('hidden');
+function msToKmh(ms) {
+  return Math.round(ms * 3.6);
 }
 
-function showError(message) {
-    loadingDiv.classList.add('hidden');
-    weatherDisplay.classList.add('hidden');
-    errorText.textContent = message;
-    errorMessage.classList.remove('hidden');
+function mToKm(meters) {
+  return meters >= 1000
+    ? `${(meters / 1000).toFixed(1)} km`
+    : `${meters} m`;
 }
 
-function getCurrentDate() {
-    const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    return now.toLocaleDateString('en-US', options);
+// ── 5. WEATHER MOOD ──────────────────────────────────────────
+const MOOD_MAP = [
+  { match: 'thunderstorm', mood: 'stormy' },
+  { match: 'drizzle',      mood: 'rainy'  },
+  { match: 'rain',         mood: 'rainy'  },
+  { match: 'snow',         mood: 'snowy'  },
+  { match: 'mist',         mood: 'misty'  },
+  { match: 'smoke',        mood: 'misty'  },
+  { match: 'haze',         mood: 'misty'  },
+  { match: 'dust',         mood: 'misty'  },
+  { match: 'fog',          mood: 'misty'  },
+  { match: 'cloud',        mood: 'cloudy' },
+  { match: 'clear',        mood: null     }, // determined by time below
+];
+
+function applyWeatherMood(conditionMain) {
+  const body = document.body;
+
+  // Remove any existing mood class
+  body.className = body.className.replace(/\bweather-mood-\S+/g, '').trim();
+
+  const key = conditionMain.toLowerCase();
+  const entry = MOOD_MAP.find(({ match }) => key.includes(match));
+
+  let mood;
+  if (!entry) {
+    mood = 'default';
+  } else if (entry.mood === null) {
+    // Clear sky: sunny or night depending on hour
+    const hour = new Date().getHours();
+    mood = (hour >= 6 && hour < 20) ? 'sunny' : 'night';
+  } else {
+    mood = entry.mood;
+  }
+
+  body.classList.add(`weather-mood-${mood}`);
 }
 
-// ====================================
-// 4. WEATHER MOOD FUNCTION (NEW!)
-// ====================================
-function setWeatherMood(weatherCondition) {
-    const body = document.body;
-    
-    body.className = body.className.replace(/weather-mood-\w+/g, '');
-    
-    const condition = weatherCondition.toLowerCase();
-    
-    const now = new Date();
-    const currentHour = now.getHours();
-    const isDaytime = currentHour >= 6 && currentHour < 18;
-    
-    if (condition.includes('clear')) {
-        body.classList.add(isDaytime ? 'weather-mood-sunny' : 'weather-mood-night');
-    }
-    else if (condition.includes('cloud')) {
-        body.classList.add('weather-mood-cloudy');
-    }
-    else if (condition.includes('rain') || condition.includes('drizzle')) {
-        body.classList.add('weather-mood-rainy');
-    }
-    else if (condition.includes('snow')) {
-        body.classList.add('weather-mood-snowy');
-    }
-    else if (condition.includes('thunderstorm')) {
-        body.classList.add('weather-mood-stormy');
-    }
-    else if (condition.includes('mist') || condition.includes('fog') || condition.includes('haze')) {
-        body.classList.add('weather-mood-misty');
-    }
-    else {
-        body.classList.add('weather-mood-default');
-    }
+// ── 6. RENDER WEATHER ────────────────────────────────────────
+function renderWeather(data) {
+  const { name, sys, main, weather, wind, visibility } = data;
+
+  els.cityName.textContent   = `${name}, ${sys.country}`;
+  els.date.textContent       = formatDate();
+  els.temp.textContent       = Math.round(main.temp);
+  els.feelsLike.textContent  = Math.round(main.feels_like);
+  els.condition.textContent  = weather[0].description;
+  els.wind.textContent       = `${msToKmh(wind.speed)} km/h`;
+  els.humidity.textContent   = `${main.humidity}%`;
+  els.pressure.textContent   = `${main.pressure} hPa`;
+  els.visibility.textContent = visibility ? mToKm(visibility) : '—';
+
+  els.icon.src = CONFIG.iconUrl(weather[0].icon);
+  els.icon.alt = weather[0].description;
+
+  applyWeatherMood(weather[0].main);
+  ui.showWeather();
 }
 
-// ====================================
-// 5. MAIN FUNCTION: FETCH WEATHER DATA
-// ====================================
-async function fetchWeatherData(city) {
-    showLoading();
-    
-    try {
-        // API URL CONSTRUCTION 
-        const url = `${BASE_URL}?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`;
-        
-        // API CALL 
-        const response = await fetch(url);
-        
-        
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('City not found. Please check the spelling and try again.');
-            } else if (response.status === 401) {
-                throw new Error('Invalid API key. Please check your configuration.');
-            } else {
-                throw new Error(`Error: ${response.status} - ${response.statusText}`);
-            }
-        }
-        
-        // Parse the JSON response
-        const data = await response.json();
-        
+// ── 7. FETCH ─────────────────────────────────────────────────
+async function fetchWeather(city) {
+  ui.showLoading();
 
-        updateWeatherUI(data);
-        
-    } catch (error) {
-        showError(error.message);
+  const url = `${CONFIG.baseUrl}?q=${encodeURIComponent(city)}&units=metric&appid=${CONFIG.apiKey}`;
+
+  try {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      const messages = {
+        404: 'City not found. Please check the spelling and try again.',
+        401: 'Invalid API key. Please check your configuration.',
+      };
+      throw new Error(messages[res.status] ?? `Unexpected error (${res.status}).`);
     }
+
+    const data = await res.json();
+    renderWeather(data);
+
+  } catch (err) {
+    // Handle network errors separately from API errors
+    const msg = err instanceof TypeError
+      ? 'Network error. Please check your connection.'
+      : err.message;
+    ui.showError(msg);
+  }
 }
 
-// ====================================
-// 6. UPDATE UI WITH WEATHER DATA
-// ====================================
-function updateWeatherUI(data) {
-    // Extract data from API response
-    const city = data.name;
-    const country = data.sys.country;
-    const temp = Math.round(data.main.temp);
-    const feelsLikeTemp = Math.round(data.main.feels_like);
-    const weatherCond = data.weather[0].main;
-    const description = data.weather[0].description;
-    const iconCode = data.weather[0].icon; 
-    
-    
-    const wind = Math.round(data.wind.speed * 3.6); // Convert m/s to km/h
-    const hum = data.main.humidity;
-    const pres = data.main.pressure;
-    
-    // Update all text elements
-    cityName.textContent = `${city}, ${country}`;
-    currentDate.textContent = getCurrentDate();
-    temperature.textContent = temp;
-    condition.textContent = description.charAt(0).toUpperCase() + description.slice(1);
-    feelsLike.textContent = feelsLikeTemp;
-    windSpeed.textContent = `${wind} km/h`;
-    humidity.textContent = `${hum}%`;
-    pressure.textContent = `${pres} hPa`;
-    
-   
-    weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-    weatherIcon.alt = description;
-    
-    setWeatherMood(weatherCond);
-    
-    // Show the weather display
-    showWeather();
+// ── 8. SEARCH HANDLER ────────────────────────────────────────
+function handleSearch() {
+  const city = els.input.value.trim();
+  if (!city) {
+    ui.showError('Please enter a city name.');
+    return;
+  }
+  els.input.value = '';
+  fetchWeather(city);
 }
 
-// ====================================
-// 7. EVENT LISTENERS
-// ====================================
-// Search button click
-searchBtn.addEventListener('click', () => {
-    const city = cityInput.value.trim();
-    
-    if (city) {
-        fetchWeatherData(city);
-        // Clear input after search
-        cityInput.value = '';
-    } else {
-        showError('Please enter a city name.');
-    }
+// ── 9. EVENT LISTENERS ───────────────────────────────────────
+els.searchBtn.addEventListener('click', handleSearch);
+
+els.input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleSearch();
 });
 
-// Enter key press in input field
-cityInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        searchBtn.click();
-    }
-});
-
-// Focus the input on page load
-window.addEventListener('load', () => {
-    cityInput.focus();
-    
-});
+// Focus input on load
+window.addEventListener('load', () => els.input.focus());

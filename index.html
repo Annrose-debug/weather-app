@@ -3,109 +3,113 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Annie_weather_app</title>
+    <title>WeatherNow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Weather App  -->
-    <div class="container">
+    <div class="bg-overlay" aria-hidden="true"></div>
+
+    <main class="container" role="main">
       <header>
-        <h1>WeatherNow</h1>
-        <p class="tagline">Get real-time weather anywhere</p>
+        <h1><i class="fa-solid fa-cloud-sun" aria-hidden="true"></i> WeatherNow</h1>
+        <p class="tagline">Real-time weather, anywhere on Earth</p>
       </header>
 
-      <!-- SEARCH SECTION  -->
-      <div class="search-container">
+      <!-- SEARCH -->
+      <section class="search-container" aria-label="City search">
         <div class="input-group">
+          <label for="cityInput" class="sr-only">Enter city name</label>
           <input
             type="text"
             id="cityInput"
-            placeholder="Enter a city name (e.g., London, Tokyo)..."
+            placeholder="Search a city… e.g. Tokyo, Cairo"
             aria-label="City name"
+            autocomplete="off"
+            spellcheck="false"
           />
-          <button id="searchBtn">Search</button>
+          <button id="searchBtn" aria-label="Search weather">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span>Search</span>
+          </button>
         </div>
+        <p class="hint">Try: Paris · New York · Seoul · Sydney</p>
+      </section>
 
-        <p class="hint">Try: Paris, New York, Tokyo, or your city</p>
+      <!-- LOADING -->
+      <div id="loading" class="loading hidden" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Fetching weather data…</p>
       </div>
 
-      <!-- Loading (hidden by default)  -->
-      <div id="loading" class="loading hidden">
-        <div class="spinner"></div>
-        <p>Fetching weather data...</p>
-      </div>
-
-      <!-- Weather display (hidden by deafult)  -->
-      <div id="weatherDisplay" class="weather-display-hidden">
-        <!-- city and date will go here  -->
+      <!-- WEATHER DISPLAY -->
+      <section id="weatherDisplay" class="weather-display hidden" aria-label="Weather results" aria-live="polite">
         <div class="weather-header">
-          <h2 id="cityName">-</h2>
-          <p id="currentDate" class="date">-</p>
+          <h2 id="cityName">—</h2>
+          <p id="currentDate" class="date">—</p>
         </div>
 
-        <!-- main weather info  -->
         <div class="weather-main">
-          <div class="temp-section">
+          <div class="temp-block">
             <div class="temperature">
-              <span id="temperature">-</span>
-              <span class="unit">°C</span>
+              <span id="temperature">—</span><span class="unit">°C</span>
             </div>
-            <div class="weather-icon">
-              <img id="weatherIcon" src="" alt="Weather icon" />
-            </div>
+            <p class="feels-like">Feels like <span id="feelsLike">—</span>°C</p>
           </div>
-          <div class="condition">
-            <p id="condition">-</p>
-            <p class="feels-like">
-              Feels like: <span id="feelsLike">-</span>°C
-            </p>
+
+          <div class="icon-block">
+            <img id="weatherIcon" src="" alt="Weather condition icon" width="100" height="100" />
+            <p id="condition" class="condition-label">—</p>
           </div>
         </div>
 
-        <!-- Additional details -->
-        <div class="weather-details">
-          <div class="detail-card">
-            <i class="fas fa-wind"></i>
+        <div class="weather-details" role="list">
+          <div class="detail-card" role="listitem">
+            <i class="fa-solid fa-wind" aria-hidden="true"></i>
             <div>
               <p class="label">Wind</p>
-              <p id="windSpeed">- km/h</p>
+              <p id="windSpeed" class="value">—</p>
             </div>
           </div>
-
-          <div class="detail-card">
-            <i class="fas fa-tint"></i>
+          <div class="detail-card" role="listitem">
+            <i class="fa-solid fa-droplet" aria-hidden="true"></i>
             <div>
               <p class="label">Humidity</p>
-              <p id="humidity">- %</p>
+              <p id="humidity" class="value">—</p>
             </div>
           </div>
-
-          <div class="detail-card">
-            <i class="fas fa-compress-alt"></i>
+          <div class="detail-card" role="listitem">
+            <i class="fa-solid fa-gauge" aria-hidden="true"></i>
             <div>
               <p class="label">Pressure</p>
-              <p id="pressure">- hPa</p>
+              <p id="pressure" class="value">—</p>
+            </div>
+          </div>
+          <div class="detail-card" role="listitem">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            <div>
+              <p class="label">Visibility</p>
+              <p id="visibility" class="value">—</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- ERROR MESSAGE (Hidden by default) -->
-      <div id="errorMessage" class="error-message hidden">
-        <i class="fas fa-exclamation-triangle"></i>
+      <!-- ERROR -->
+      <div id="errorMessage" class="error-message hidden" role="alert" aria-live="assertive">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
         <p id="errorText">City not found. Please try again.</p>
       </div>
 
-      <!-- FOOTER -->
       <footer>
-        <!-- <p>Powered by <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap API</a></p> -->
-        <p class="copyright">
-          © 2026 WeatherNow | Built with HTML, CSS & JavaScript
-        </p>
+        <p>Powered by <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a></p>
+        <p class="copyright">© 2026 WeatherNow · HTML, CSS &amp; JavaScript</p>
       </footer>
-    </div>
+    </main>
 
-    <!-- JavaScript file -->
     <script src="script.js"></script>
   </body>
 </html>
